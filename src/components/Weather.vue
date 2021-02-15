@@ -25,7 +25,10 @@
         <strong>{{ location.latitude }}, {{ location.longitude }}</strong>
       </div>
       <div>
-        <span v-if="location.locationLabel !== null"
+        <span
+          v-if="
+            location.locationLabel !== null || location.locationLabel !== ''
+          "
           >Place is <strong>{{ location.locationLabel }}</strong>
         </span>
       </div>
@@ -36,11 +39,20 @@
 
     <br />
     <div>
+      <strong
+        >Below is the details of weather information for the above
+        locations</strong
+      >
+    </div>
+
+    <div>
+      Weather View :
       <select class="form-control" v-model="currentWeatherView" required>
         <option value="current">Current</option>
         <option value="hourly">Hourly</option>
         <option value="daily">Daily</option>
       </select>
+      (Please change dropdown to see different views of weather info)
     </div>
     <br />
     <div>
