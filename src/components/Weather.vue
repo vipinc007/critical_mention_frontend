@@ -68,7 +68,7 @@
         >
           <td>{{ getFormatedDateToDisplay(item) }}</td>
           <td>{{ getTemperatureToDisplay(item.temp) }}</td>
-          <td>{{ item.weather[0].main }}</td>
+          <td>{{ getWeatherConditionInfoToDisplay(item) }}</td>
         </tr>
       </table>
     </div>
@@ -179,7 +179,15 @@ export default {
         return `${temp.min} / ${temp.max}`;
       } else return temp;
     },
-
+    getWeatherConditionInfoToDisplay: function(item) {
+      if (
+        item.weather === undefined ||
+        item.weather === null ||
+        item.weather.length == 0
+      )
+        return "";
+      return item.weather[0].main;
+    },
     getWeatherInfoByCurrentWeatherView: function() {
       if (this.weatherdata === null) return [];
       if (this.currentWeatherView == "current") {
