@@ -3,7 +3,7 @@
     <h1>Weather information</h1>
     <places
       v-model="currentSearchedPlace.country.label"
-      placeholder="search any location ?"
+      placeholder="search any location here"
       @change="onLocationChange"
       :options="placesSearchOptions"
     >
@@ -19,7 +19,9 @@
     </div>
 
     <div v-if="location">
-      Your current or selected or previously selected location cordinates are
+      <strong
+        >Your current or selected or previously selected location cordinates are
+      </strong>
       <div>
         (Lat, Lon) :
         <strong>{{ location.latitude }}, {{ location.longitude }}</strong>
@@ -29,7 +31,7 @@
           v-if="
             location.locationLabel !== null || location.locationLabel !== ''
           "
-          >Place is <strong>{{ location.locationLabel }}</strong>
+          >Place : <strong>{{ location.locationLabel }}</strong>
         </span>
       </div>
       <div v-if="weatherdata !== null">
@@ -39,10 +41,7 @@
 
     <br />
     <div>
-      <strong
-        >Below is the details of weather information for the above
-        locations</strong
-      >
+      <strong>Below are the weather details for the above location</strong>
     </div>
 
     <div>
@@ -52,7 +51,7 @@
         <option value="hourly">Hourly</option>
         <option value="daily">Daily</option>
       </select>
-      (Please change dropdown to see different views of weather info)
+      (You can change the dropdown to see different views of weather info)
     </div>
     <br />
     <div>
