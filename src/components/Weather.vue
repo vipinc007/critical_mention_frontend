@@ -59,14 +59,13 @@
 <script>
 import Utils from "@/service/utils.js";
 import Places from "vue-places";
+import DataAPI from "@/service/open_weather.js";
 export default {
+  name: "WeatherInfo",
   components: { Places },
-  name: "HelloWorld",
-  props: {
-    msg: String,
-  },
   data: function() {
     return {
+      apiObject: new DataAPI(),
       location: null,
       isFindingYourLocation: false,
       errorWhileFindingYourLocation: null,
@@ -152,7 +151,7 @@ export default {
     },
 
     load_weather: function(latitude, longitude, save_location = false) {
-      this.$dataAPI
+      this.apiObject
         .doGet(`?lat=${latitude}&lon=${longitude}&exclude=minutely,alerts`)
         .then((results) => {
           if (results.RequestSuccess) {
