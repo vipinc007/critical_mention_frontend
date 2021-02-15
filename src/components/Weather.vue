@@ -105,14 +105,13 @@ export default {
     };
   },
   created() {
-    //do we support geolocation
     if (!("geolocation" in navigator)) {
       this.errorWhileFindingYourLocation = "Geolocation is not available.";
       return;
     }
 
     this.isFindingYourLocation = true;
-    // get position
+
     let saved_location = Utils.get_saved_location();
 
     if (saved_location === null) {
@@ -125,11 +124,7 @@ export default {
           );
 
           Utils.save_location(this.location);
-
-          this.load_weather(
-            this.location.coords.latitude,
-            this.location.coords.longitude
-          );
+          this.load_weather(...Object.values(this.location));
         },
         (err) => {
           this.isFindingYourLocation = false;
@@ -139,11 +134,12 @@ export default {
     } else {
       this.isFindingYourLocation = false;
       this.location = saved_location;
-      this.load_weather(
-        saved_location.latitude,
-        saved_location.longitude,
-        saved_location.locationLabel
-      );
+      this.load_weather(...Object.values(saved_location));
+      if (
+        saved_location.locationLabel !== undefined &&
+        saved_location.locationLabel !== null
+      )
+        this.currentSearchedPlace.country.label = saved_location.locationLabel;
     }
   },
   methods: {
@@ -157,11 +153,7 @@ export default {
         true
       );
     },
-    getLocationObjectToSave: function(
-      latitude,
-      longitude,
-      locationLabel = null
-    ) {
+    getLocationObjectToSave: (latitude, longitude, locationLabel = null) => {
       return {
         latitude: latitude,
         longitude: longitude,
@@ -173,12 +165,12 @@ export default {
         (item.dt + this.weatherdata.timezone_offset) * 1000
       ).toLocaleString("en-US");
     },
-    getTemperatureToDisplay: function(temp) {
+    getTemperatureToDisplay: (temp) => {
       if (temp instanceof Object) {
-        return `${temp.min} / ${temp.max}`;
+        return `${temp.max} / ${temp.min}`;
       } else return temp;
     },
-    getWeatherConditionInfoToDisplay: function(item) {
+    getWeatherConditionInfoToDisplay: (item) => {
       if (
         item.weather === undefined ||
         item.weather === null ||
