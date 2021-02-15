@@ -61,9 +61,9 @@
     <div>
       <table style="width:100%; text-align: left;">
         <tr>
-          <th width="30%">dt</th>
-          <th width="30%">high / Low</th>
-          <th width="30%">condition</th>
+          <th width="30%">Date</th>
+          <th width="30%">Temperature : High / Low</th>
+          <th width="30%">Condition</th>
         </tr>
         <tr
           v-for="item in getWeatherInfoByCurrentWeatherView()"
