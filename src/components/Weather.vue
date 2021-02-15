@@ -1,6 +1,8 @@
 <template>
   <div class="hello">
-    <h1>Weather information</h1>
+    <h1>Find Weather Information</h1>
+    <br />
+    <div>Search the location of your choice in the below box:</div>
     <places
       v-model="currentSearchedPlace.country.label"
       placeholder="search any location here"
@@ -8,6 +10,8 @@
       :options="placesSearchOptions"
     >
     </places>
+    <br />
+    <br />
 
     <div v-if="errorWhileFindingYourLocation">
       Sorry, but the following error occurred:
@@ -78,6 +82,7 @@
 import Utils from "@/common/utils.js";
 import Places from "vue-places";
 import DataAPI from "@/service/open_weather.js";
+
 export default {
   name: "WeatherInfo",
   components: { Places },
@@ -94,7 +99,6 @@ export default {
         apiKey: "18183ac7abce5ce0e583f6674330e092",
         aroundLatLngViaIP: true,
         useDeviceLocation: true,
-        // countries: ["US"],
       },
       currentSearchedPlace: {
         country: {
@@ -109,11 +113,8 @@ export default {
       this.errorWhileFindingYourLocation = "Geolocation is not available.";
       return;
     }
-
     this.isFindingYourLocation = true;
-
     let saved_location = Utils.get_saved_location();
-
     if (saved_location === null) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -166,9 +167,8 @@ export default {
       ).toLocaleString("en-US");
     },
     getTemperatureToDisplay: (temp) => {
-      if (temp instanceof Object) {
-        return `${temp.max} / ${temp.min}`;
-      } else return temp;
+      if (temp instanceof Object) return `${temp.max} / ${temp.min}`;
+      else return temp;
     },
     getWeatherConditionInfoToDisplay: (item) => {
       if (
@@ -185,9 +185,7 @@ export default {
         let arr = [];
         arr.push({ ...this.weatherdata.current });
         return arr;
-      } else {
-        return this.weatherdata[this.currentWeatherView];
-      }
+      } else return this.weatherdata[this.currentWeatherView];
     },
 
     load_weather: function(
