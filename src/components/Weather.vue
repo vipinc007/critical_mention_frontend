@@ -24,7 +24,7 @@
 
     <div v-if="location">
       <strong
-        >Your current or selected or previously selected location cordinates are
+        >Your current or selected or previously selected location details are
       </strong>
       <div>
         (Lat, Lon) :
