@@ -19,14 +19,21 @@
     </div>
 
     <div v-if="location">
-      Your location data is {{ location.coords.latitude }},
-      {{ location.coords.longitude }}
+      Your current or selected or previously selected location cordinates are
+      <div>
+        (Lat, Lon) :
+        <strong>{{ location.latitude }}, {{ location.longitude }}</strong>
+      </div>
+      <div>
+        <span v-if="location.locationLabel !== null"
+          >Place is <strong>{{ location.locationLabel }}</strong>
+        </span>
+      </div>
+      <div v-if="weatherdata !== null">
+        Time Zone : <strong>{{ weatherdata.timezone }}</strong>
+      </div>
     </div>
-    <br />
-    <div v-if="weatherdata !== null">
-      Your current or selected or previously selected location time zone is
-      <strong>{{ weatherdata.timezone }}</strong>
-    </div>
+
     <br />
     <div>
       <select class="form-control" v-model="currentWeatherView" required>
@@ -57,7 +64,7 @@
 </template>
 
 <script>
-import Utils from "@/service/utils.js";
+import Utils from "@/common/utils.js";
 import Places from "vue-places";
 import DataAPI from "@/service/open_weather.js";
 export default {
@@ -101,12 +108,13 @@ export default {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           this.isFindingYourLocation = false;
-          this.location = pos;
+          this.location = this.getLocationObjectToSave(
+            pos.coords.latitude,
+            pos.coords.longitude
+          );
 
-          Utils.save_location({
-            latitude: this.location.coords.latitude,
-            longitude: this.location.coords.longitude,
-          });
+          Utils.save_location(this.location);
+
           this.load_weather(
             this.location.coords.latitude,
             this.location.coords.longitude
@@ -119,14 +127,35 @@ export default {
       );
     } else {
       this.isFindingYourLocation = false;
-      this.load_weather(saved_location.latitude, saved_location.longitude);
+      this.location = saved_location;
+      this.load_weather(
+        saved_location.latitude,
+        saved_location.longitude,
+        saved_location.locationLabel
+      );
     }
   },
   methods: {
     onLocationChange: function(newval) {
       console.log(newval);
       if (Object.keys(newval).length == 0) return;
-      this.load_weather(newval.latlng.lat, newval.latlng.lng, true);
+      this.load_weather(
+        newval.latlng.lat,
+        newval.latlng.lng,
+        newval.value,
+        true
+      );
+    },
+    getLocationObjectToSave: function(
+      latitude,
+      longitude,
+      locationLabel = null
+    ) {
+      return {
+        latitude: latitude,
+        longitude: longitude,
+        locationLabel: locationLabel,
+      };
     },
     getFormatedDateToDisplay: function(item) {
       return new Date(
@@ -150,18 +179,26 @@ export default {
       }
     },
 
-    load_weather: function(latitude, longitude, save_location = false) {
+    load_weather: function(
+      latitude,
+      longitude,
+      locationLabel = null,
+      save_location = false
+    ) {
       this.apiObject
         .doGet(`?lat=${latitude}&lon=${longitude}&exclude=minutely,alerts`)
         .then((results) => {
           if (results.RequestSuccess) {
             console.log(results);
             this.weatherdata = results;
-            if (save_location)
-              Utils.save_location({
-                latitude: results.lat,
-                longitude: results.lon,
-              });
+            if (save_location) {
+              this.location = this.getLocationObjectToSave(
+                results.lat,
+                results.lon,
+                locationLabel
+              );
+              Utils.save_location(this.location);
+            }
           }
         })
         .catch((error) => {

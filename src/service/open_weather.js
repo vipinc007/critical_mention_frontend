@@ -1,11 +1,9 @@
 import axios from "axios";
 ("use strict");
 export default class DataAPI {
-  API_URL_ONECALL = null;
+  API_URL_ONECALL = "https://api.openweathermap.org/data/2.5/onecall";
   API_KEY = "c1b05123eea170e5538e5c0219680474";
-  constructor() {
-    this.API_URL_ONECALL = "https://api.openweathermap.org/data/2.5/onecall";
-  }
+  constructor() {}
   doGet(apiname) {
     return axios
       .get(this.API_URL_ONECALL + apiname + "&appid=" + this.API_KEY)
